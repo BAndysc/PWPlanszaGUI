@@ -35,7 +35,7 @@ public class MojaPlanszaGUI extends MojaPlansza {
     }
 
     @Override
-    public synchronized void postaw(Postać postać, int wiersz, int kolumna)  throws InterruptedException {
+    public void postaw(Postać postać, int wiersz, int kolumna)  throws InterruptedException {
         informPostaćChceSięPostawić(postać, wiersz, kolumna);
         try {
             super.postaw(postać, wiersz, kolumna);
@@ -55,15 +55,18 @@ public class MojaPlanszaGUI extends MojaPlansza {
     }
 
     @Override
-    public synchronized void przesuń(Postać postać, Kierunek kierunek) throws InterruptedException, DeadlockException {
+    public void przesuń(Postać postać, Kierunek kierunek) throws InterruptedException, DeadlockException {
         informChęćPrzesunięcia(postać, kierunek);
         // symulowanie, że przesuwanie chwilę trwa
         if (opóźnienie)
         {
+            /* Jeśli cała metoda synchronized: 
             long wait =  random.nextInt(100)+20;
             long wakeAt =  System.currentTimeMillis() +wait;
             while (System.currentTimeMillis() < wakeAt)
                 this.wait(wait);
+            wpp
+            Thread.currentThread.sleep(random.nextInt(100)+20); */
         }
 
         try {
@@ -80,13 +83,13 @@ public class MojaPlanszaGUI extends MojaPlansza {
     }
 
     @Override
-    public synchronized void usuń(Postać postać) {
+    public void usuń(Postać postać) {
         super.usuń(postać);
         informPostaćUsunięta(postać);
     }
 
     @Override
-    public synchronized void sprawdź(final int wiersz, final int kolumna, final Akcja jeśliZajęte, final Runnable jeśliWolne) {
+    public void sprawdź(final int wiersz, final int kolumna, final Akcja jeśliZajęte, final Runnable jeśliWolne) {
         super.sprawdź(wiersz, kolumna, new Akcja() {
             @Override
             public void wykonaj(Postać postać) {
