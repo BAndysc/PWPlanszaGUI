@@ -1,18 +1,19 @@
 package test;
 
 import gra.*;
-import javafx.beans.property.BooleanProperty;
 import test.gui.MojaPlanszaGUI;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PionekLosowoChodzący extends TesterPionek {
 
-    private BooleanProperty stan;
+    private AtomicBoolean stan;
 
     public PionekLosowoChodzący(MojaPlanszaGUI plansza, Postać postać, int wiersz, int kolumna) {
         this(plansza, postać, wiersz, kolumna, null);
     }
 
-    public PionekLosowoChodzący(MojaPlanszaGUI plansza, Postać postać, int wiersz, int kolumna, BooleanProperty stan) {
+    public PionekLosowoChodzący(MojaPlanszaGUI plansza, Postać postać, int wiersz, int kolumna, AtomicBoolean stan) {
         super(plansza, postać, wiersz, kolumna);
         this.stan = stan;
     }

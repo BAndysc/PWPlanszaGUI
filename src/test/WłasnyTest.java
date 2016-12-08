@@ -3,10 +3,6 @@ package test;
 
 import gra.Postać;
 import implementacja.MojaPostać;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import test.gui.GraGUI;
 import test.gui.MojaPlanszaGUI;
 import test.gui.OknoSwingGUI;
@@ -19,12 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WłasnyTest {
 
     final List<Thread> wątki =  new ArrayList<Thread>();
     final Semaphore muteks = new Semaphore(1);
-    final BooleanProperty stan = new SimpleBooleanProperty(true);
+    final AtomicBoolean stan = new AtomicBoolean(true);
 
     public WłasnyTest() {
 
@@ -37,26 +34,24 @@ public class WłasnyTest {
                 JToolBar toolbar = new JToolBar();
 
                 final JButton button = new JButton("Stop");
-                stan.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        button.setText(newValue?"Stop":"Start");
-                    }
-                });
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (stan.getValue())
+                        boolean s = stan.get();
+                        if (s)
                             zatrzymajWątki();
                         else
                             startujWątki();
-                        stan.set(!stan.get());
+                        stan.set(!s);
                     }
                 });
 
                 final JTextField ileWątków = new JTextField("1");
+                ileWątków.setPreferredSize(new Dimension(200, 30));
                 final JTextField maksSzer = new JTextField("1");
+                maksSzer.setPreferredSize(new Dimension(200, 30));
                 final JTextField maksWys = new JTextField("1");
+                maksWys.setPreferredSize(new Dimension(200, 30));
 
                 JButton button2 = new JButton("Stwórz tyle wątków");
                 button2.addActionListener(new ActionListener() {
@@ -86,7 +81,6 @@ public class WłasnyTest {
         }) {
             @Override
             public void stwórzWątekZPionkiem(Postać postać, int y, int x) {
-        		// przekazywanie tam stanu to proszenie się o błędy :v
                 Thread wątek = new Thread(new PionekLosowoChodzący(dajPlansza(), postać, y, x, stan));
                 wątek.start();
                 muteks.acquireUninterruptibly();

@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 
 
-public class GraGUI implements IPostaćPostawionaListener, IPostaćPrzeuniętaListener, IChęćPrzesunięciaListener, IPostaćChceSięPostawić, IZakleszczenieListener, IPostaćUsuniętaListener, IWątekInterruptedListener, ISprawdzanieListener {
+public class GraGUI implements IPostaćPostawionaListener, IPostaćPrzeuniętaListener, IChęćPrzesunięciaListener, IPostaćChceSięPostawić, IZakleszczenieListener, IPostaćUsuniętaListener, IWątekInterruptedListener, ISprawdzanieListener, INieprawidłowyArgumentListener {
 
     private RysownikPlanszy rysownik;
     private FajnoKolorGenerator generatorKolorów = new FajnoKolorGenerator();
@@ -39,6 +39,7 @@ public class GraGUI implements IPostaćPostawionaListener, IPostaćPrzeuniętaLi
         plansza.dodajPostaćUsuniętaListener(this);
         plansza.dodajWątekInterruptedListener(this);
         plansza.dodajSprawdzanieListener(this);
+        plansza.dodajNieprawidłowyArgumentListeners(this);
     }
 
     public void paintPlansza () {
@@ -176,5 +177,10 @@ public class GraGUI implements IPostaćPostawionaListener, IPostaćPrzeuniętaLi
     @Override
     public void sprawdziłemIByłoZajęte(int wiersz, int kolumna, Postać postać) {
         dodajWiadomość(String.format("Wątek %s: sprawdził pole (%d, %d) i było zajęte przez: %s", Thread.currentThread().getName(), kolumna, wiersz, postać.toString()));
+    }
+
+    @Override
+    public void nieprawidłowyArgument(IllegalArgumentException e) {
+        dodajWiadomość("Wątek "+Thread.currentThread().getName()+": błędny argument! "+e.getMessage());
     }
 }

@@ -23,6 +23,7 @@ public class MojaPlanszaGUI extends MojaPlansza {
     private List<IWątekInterruptedListener> wątekInterruptedListeners = new ArrayList<>();
     private List<IPostaćUsuniętaListener> postaćUsuniętaListeners = new ArrayList<>();
     private List<ISprawdzanieListener> sprawdzanieListeners = new ArrayList<>();
+    private List<INieprawidłowyArgumentListener> nieprawidłowyArgumentListeners = new ArrayList<>();
 
     public MojaPlanszaGUI(int wysokość, int szerokość) {
         this(wysokość, szerokość, true);
@@ -41,6 +42,9 @@ public class MojaPlanszaGUI extends MojaPlansza {
             super.postaw(postać, wiersz, kolumna);
         } catch (InterruptedException e) {
             informInterrupted(e);
+            throw e;
+        } catch (IllegalArgumentException e) {
+            informIllegalArgument(e);
             throw e;
         }
         informPostaćPostawiona(postać, wiersz, kolumna);
@@ -76,6 +80,9 @@ public class MojaPlanszaGUI extends MojaPlansza {
             throw e;
         } catch (DeadlockException e) {
             informZakleszczenie();
+            throw e;
+        } catch (IllegalArgumentException e) {
+            informIllegalArgument(e);
             throw e;
         }
 
@@ -137,6 +144,10 @@ public class MojaPlanszaGUI extends MojaPlansza {
 
     public void dodajSprawdzanieListener(ISprawdzanieListener listener) { sprawdzanieListeners.add(listener); }
 
+    public void dodajNieprawidłowyArgumentListeners(INieprawidłowyArgumentListener listener) {
+        nieprawidłowyArgumentListeners.add(listener);
+    }
+
     private void informPostaćPostawiona(Postać postać, int wiersz, int kolumna) {
         for (IPostaćPostawionaListener listener : postaćPostawionaListeners)
             listener.postaćPostawiona(postać, wiersz, kolumna);
@@ -194,6 +205,11 @@ public class MojaPlanszaGUI extends MojaPlansza {
     {
         for (ISprawdzanieListener listener : sprawdzanieListeners)
             listener.sprawdziłemIByłoZajęte(wiersz, kolumna, postać);
+    }
+
+    private void informIllegalArgument(IllegalArgumentException e) {
+        for (INieprawidłowyArgumentListener listener : nieprawidłowyArgumentListeners)
+            listener.nieprawidłowyArgument(e);
     }
 
 
